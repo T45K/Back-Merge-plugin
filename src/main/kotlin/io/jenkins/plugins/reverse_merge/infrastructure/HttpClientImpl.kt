@@ -44,7 +44,7 @@ class HttpClientImpl(
             .execute()
             .use { it.body.string() }
             .let(jsonParser::readTree)
-            .flatMap { it["values"] }
+            .let { it["values"] }
             .map { json ->
                 PullRequest(
                     json["fromRef"]["displayId"].asText(),
