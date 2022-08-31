@@ -16,7 +16,9 @@ class HttpClientImpl(
     private val client = OkHttpClient()
     private val jsonMapper = jacksonObjectMapper()
 
-    fun fetchBranchByName(urlElements: UrlElements, branchName: String): Branch? {
+    // https://developer.atlassian.com/server/bitbucket/rest/v803/api-group-projects/#api-projects-projectkey-repos-repositoryslug-branches-get
+    // https://{baseUrl}/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/branches
+    override fun fetchBranchByName(urlElements: UrlElements, branchName: String): Branch? {
         val url = urlElements.toUrl()
 
         val request = Request.Builder()
@@ -29,6 +31,7 @@ class HttpClientImpl(
             .execute()
             .use { it.body.string() }
             .let(jsonMapper::readTree)
+            .let { it["values"] }
             .map { json ->
                 Branch(
                     json["id"].asText(),
@@ -67,16 +70,16 @@ class HttpClientImpl(
     // https://{baseUrl}/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests
     override fun sendReverseMergePullRequest(
         urlElements: UrlElements,
-        fromBranchName: String,
-        toBranchName: String,
+        fromBranch: Branch,
+        toBranch: Branch,
         reviewer: BitbucketUser,
     ) {
         val url = urlElements.toUrl()
 
         val requestBody = jsonMapper.writeValueAsString(
             mapOf(
-                "fromRef" to mapOf("displayId" to fromBranchName),
-                "toRef" to mapOf("displayId" to toBranchName),
+                "fromRef" to mapOf("id" to fromBranch.id),
+                "toRef" to mapOf("id" to toBranch.id),
                 "reviewers" to mapOf("user" to mapOf("id" to reviewer.id))
             )
         ).toRequestBody("application/json; charset=utf-8".toMediaType())

@@ -1,29 +1,96 @@
 package io.jenkins.plugins.reverse_merge.infrastructure
 
+import groovy.json.JsonSlurper
 import io.jenkins.plugins.reverse_merge.domain.BitbucketUser
+import io.jenkins.plugins.reverse_merge.domain.Branch
 import io.jenkins.plugins.reverse_merge.domain.PullRequest
+import io.jenkins.plugins.reverse_merge.domain.UrlElements
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
 import spock.lang.Specification
 
 class HttpClientImplTest extends Specification {
     private final def mockWebServer = new MockWebServer()
+    private final def sut = new HttpClientImpl('hoge', 'fuga')
+
+    def 'fetchBranchByName returns branch object from JSON'() {
+        given:
+        mockWebServer.enqueue(new MockResponse().setBody(branchJson))
+
+        final def urlElements = new UrlElements(mockWebServer.url('').toString(), 'foo', 'bar')
+
+        expect:
+        sut.fetchBranchByName(urlElements, name) == branch
+
+        where:
+        name     | branch
+        'master' | new Branch('refs/heads/master', 'master')
+        'work'   | null
+    }
 
     def 'fetchOpenPullRequests can deserialize JSON as API response'() {
         given:
-        mockWebServer.enqueue(new MockResponse().setBody(json))
+        mockWebServer.enqueue(new MockResponse().setBody(prJson))
 
-        final def sut = new HttpClientImpl('hoge', 'fuga')
+        final def urlElements = new UrlElements(mockWebServer.url('').toString(), 'foo', 'bar')
 
         expect:
-        sut.fetchOpenPullRequests(mockWebServer.url('').toString(), 'foo', 'bar') ==
+        sut.fetchOpenPullRequests(urlElements) ==
             [new PullRequest('feature-ABC-1233', 'Talking Nerdy', new BitbucketUser(101))]
 
         cleanup:
         mockWebServer.shutdown()
     }
 
-    private final def json = '''
+    def 'sendReverseMergePullRequest sends toRef id, fromRef id, and reviewer id'() {
+        given:
+        mockWebServer.enqueue(new MockResponse().setResponseCode(200))
+
+        final def urlElements = new UrlElements(mockWebServer.url('').toString(), 'foo', 'bar')
+        final def masterBranch = new Branch('refs/heads/master', 'master')
+        final def workBranch = new Branch('refs/heads/work', 'work')
+        final def user = new BitbucketUser(12345)
+
+        when:
+        sut.sendReverseMergePullRequest(urlElements, masterBranch, workBranch, user)
+
+        then:
+        mockWebServer.requestCount == 1
+        final def request = mockWebServer.takeRequest()
+        new JsonSlurper().parseText(request.body.readUtf8()) == [
+            fromRef  : [id: 'refs/heads/master'],
+            toRef    : [id: 'refs/heads/work'],
+            reviewers: [user: [id: 12345]]
+        ]
+    }
+
+    def cleanup() {
+        mockWebServer.shutdown()
+    }
+
+    /*
+    heredoc
+     */
+    private final def branchJson = '''
+{
+  "values": [
+    {
+      "default": true,
+      "displayId": "master",
+      "latestCommit": "8d51122def5632836d1cb1026e879069e10a1e13",
+      "latestChangeset": "8d51122def5632836d1cb1026e879069e10a1e13",
+      "id": "refs/heads/master"
+    }
+  ],
+  "size": 1,
+  "limit": 25,
+  "isLastPage": true,
+  "nextPageStart": 2154,
+  "start": 2154
+}
+'''
+
+    private final def prJson = '''
 {
   "values": [
     {

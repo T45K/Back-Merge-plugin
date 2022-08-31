@@ -1,11 +1,13 @@
 package io.jenkins.plugins.reverse_merge.domain
 
 interface HttpClient {
-    fun fetchOpenPullRequests(
-        gitRepositoryHostingServiceUrl: String,
-        projectName: String,
-        repositoryName: String,
-    ): List<PullRequest>
 
-    fun sendReverseMergePullRequest()
+    fun fetchBranchByName(urlElements: UrlElements, branchName: String): Branch?
+    fun fetchOpenPullRequests(urlElements: UrlElements): List<PullRequest>
+    fun sendReverseMergePullRequest(
+        urlElements: UrlElements,
+        fromBranch: Branch,
+        toBranch: Branch,
+        reviewer: BitbucketUser
+    )
 }
