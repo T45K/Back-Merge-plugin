@@ -1,38 +1,23 @@
 package io.jenkins.plugins.reverse_merge.infrastructure
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.jenkins.plugins.reverse_merge.domain.BitbucketUser
-import io.jenkins.plugins.reverse_merge.domain.HttpClient
-import io.jenkins.plugins.reverse_merge.domain.PullRequest
+import io.jenkins.plugins.reverse_merge.domain.*
 import okhttp3.Credentials
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 
 class HttpClientImpl(
     private val basicAuthUserName: String,
     private val basicAuthPassword: String,
 ) : HttpClient {
     private val client = OkHttpClient()
-    private val jsonParser = jacksonObjectMapper()
+    private val jsonMapper = jacksonObjectMapper()
 
-    // https://developer.atlassian.com/server/bitbucket/rest/v803/api-group-projects/#api-projects-projectkey-repos-repositoryslug-pull-requests-get
-    // https://{baseurl}/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests
-    override fun fetchOpenPullRequests(
-        gitRepositoryHostingServiceUrl: String,
-        projectName: String,
-        repositoryName: String
-    ): List<PullRequest> {
-        val url = gitRepositoryHostingServiceUrl.toHttpUrl().newBuilder()
-            .addPathSegment("rest")
-            .addPathSegment("api")
-            .addPathSegment("1.0")
-            .addPathSegment("projects")
-            .addPathSegment(projectName)
-            .addPathSegment("repos")
-            .addPathSegment(repositoryName)
-            .addPathSegment("pull-requests")
-            .build()
+    fun fetchBranchByName(urlElements: UrlElements, branchName: String): Branch? {
+        val url = urlElements.toUrl()
 
         val request = Request.Builder()
             .addHeader("Authorization", Credentials.basic(basicAuthUserName, basicAuthPassword))
@@ -43,7 +28,31 @@ class HttpClientImpl(
         return client.newCall(request)
             .execute()
             .use { it.body.string() }
-            .let(jsonParser::readTree)
+            .let(jsonMapper::readTree)
+            .map { json ->
+                Branch(
+                    json["id"].asText(),
+                    json["displayId"].asText()
+                )
+            }
+            .find { it.displayId == branchName }
+    }
+
+    // https://developer.atlassian.com/server/bitbucket/rest/v803/api-group-projects/#api-projects-projectkey-repos-repositoryslug-pull-requests-get
+    // https://{baseurl}/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests
+    override fun fetchOpenPullRequests(urlElements: UrlElements): List<PullRequest> {
+        val url = urlElements.toUrl()
+
+        val request = Request.Builder()
+            .addHeader("Authorization", Credentials.basic(basicAuthUserName, basicAuthPassword))
+            .url(url)
+            .get()
+            .build()
+
+        return client.newCall(request)
+            .execute()
+            .use { it.body.string() }
+            .let(jsonMapper::readTree)
             .let { it["values"] }
             .map { json ->
                 PullRequest(
@@ -54,7 +63,41 @@ class HttpClientImpl(
             }
     }
 
-    override fun sendReverseMergePullRequest() {
-        TODO("Not yet implemented")
+    // https://developer.atlassian.com/server/bitbucket/rest/v803/api-group-projects/#api-projects-projectkey-repos-repositoryslug-pull-requests-post
+    // https://{baseUrl}/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests
+    override fun sendReverseMergePullRequest(
+        urlElements: UrlElements,
+        fromBranchName: String,
+        toBranchName: String,
+        reviewer: BitbucketUser,
+    ) {
+        val url = urlElements.toUrl()
+
+        val requestBody = jsonMapper.writeValueAsString(
+            mapOf(
+                "fromRef" to mapOf("displayId" to fromBranchName),
+                "toRef" to mapOf("displayId" to toBranchName),
+                "reviewers" to mapOf("user" to mapOf("id" to reviewer.id))
+            )
+        ).toRequestBody("application/json; charset=utf-8".toMediaType())
+
+        val request = Request.Builder()
+            .addHeader("Authorization", Credentials.basic(basicAuthUserName, basicAuthPassword))
+            .url(url)
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).execute()
     }
+
+    private fun UrlElements.toUrl() = this.gitRepositoryHostingServiceUrl.toHttpUrl().newBuilder()
+        .addPathSegment("rest")
+        .addPathSegment("api")
+        .addPathSegment("1.0")
+        .addPathSegment("projects")
+        .addPathSegment(this.projectName)
+        .addPathSegment("repos")
+        .addPathSegment(this.repositoryName)
+        .addPathSegment("pull-requests")
+        .build()
 }
