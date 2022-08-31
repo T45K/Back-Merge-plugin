@@ -49,7 +49,7 @@ class HttpClientImpl(
                 PullRequest(
                     json["fromRef"]["displayId"].asText(),
                     json["title"].asText(),
-                    BitbucketUser(json["participants"].first { it["role"].asText() == "AUTHOR" }["user"]["id"].asInt())
+                    BitbucketUser(json["author"]["user"]["id"].asInt())
                 )
             }
     }

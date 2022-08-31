@@ -194,6 +194,17 @@ class HttpClientImplTest extends Specification {
           "slug": "my-repo"
         }
       },
+      "author": {
+        "user": {
+          "name": "jcitizen",
+          "id": 101,
+          "type": "NORMAL",
+          "displayName": "Jane Citizen",
+          "emailAddress": "jane@example.com",
+          "active": true,
+          "slug": "jcitizen"
+        }
+      },
       "title": "Talking Nerdy",
       "closed": false
     }
