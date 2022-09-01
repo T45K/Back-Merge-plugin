@@ -36,7 +36,7 @@ class HttpClientImplTest extends Specification {
 
         expect:
         sut.fetchOpenPullRequests(urlElements) ==
-            [new PullRequest('feature-ABC-1233', 'Talking Nerdy', new BitbucketUser(101))]
+            [new PullRequest(new Branch('refs/heads/feature-ABC-123', 'feature-ABC-1233'), new BitbucketUser(101))]
 
         cleanup:
         mockWebServer.shutdown()
@@ -52,15 +52,17 @@ class HttpClientImplTest extends Specification {
         final def user = new BitbucketUser(12345)
 
         when:
-        sut.sendReverseMergePullRequest(urlElements, masterBranch, workBranch, user)
+        sut.sendReverseMergePullRequest(urlElements, 'title', masterBranch, workBranch, user, 'description')
 
         then:
         mockWebServer.requestCount == 1
         final def request = mockWebServer.takeRequest()
         new JsonSlurper().parseText(request.body.readUtf8()) == [
-            fromRef  : [id: 'refs/heads/master'],
-            toRef    : [id: 'refs/heads/work'],
-            reviewers: [user: [id: 12345]]
+            title      : 'title',
+            fromRef    : [id: 'refs/heads/master'],
+            toRef      : [id: 'refs/heads/work'],
+            reviewers  : [user: [id: 12345]],
+            description: 'description'
         ]
     }
 

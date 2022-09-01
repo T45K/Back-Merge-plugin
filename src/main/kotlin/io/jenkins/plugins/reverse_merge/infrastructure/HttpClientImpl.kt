@@ -59,8 +59,7 @@ class HttpClientImpl(
             .let { it["values"] }
             .map { json ->
                 PullRequest(
-                    json["fromRef"]["displayId"].asText(),
-                    json["title"].asText(),
+                    Branch(json["fromRef"]["id"].asText(), json["fromRef"]["displayId"].asText()),
                     BitbucketUser(json["author"]["user"]["id"].asInt())
                 )
             }
@@ -70,17 +69,21 @@ class HttpClientImpl(
     // https://{baseUrl}/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests
     override fun sendReverseMergePullRequest(
         urlElements: UrlElements,
+        title: String,
         fromBranch: Branch,
         toBranch: Branch,
         reviewer: BitbucketUser,
+        description: String,
     ) {
         val url = urlElements.toUrl()
 
         val requestBody = jsonMapper.writeValueAsString(
             mapOf(
+                "title" to title,
                 "fromRef" to mapOf("id" to fromBranch.id),
                 "toRef" to mapOf("id" to toBranch.id),
-                "reviewers" to mapOf("user" to mapOf("id" to reviewer.id))
+                "reviewers" to mapOf("user" to mapOf("id" to reviewer.id)),
+                "description" to description
             )
         ).toRequestBody("application/json; charset=utf-8".toMediaType())
 

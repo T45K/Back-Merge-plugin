@@ -6,8 +6,10 @@ interface HttpClient {
     fun fetchOpenPullRequests(urlElements: UrlElements): List<PullRequest>
     fun sendReverseMergePullRequest(
         urlElements: UrlElements,
+        title: String,
         fromBranch: Branch,
         toBranch: Branch,
-        reviewer: BitbucketUser
+        reviewer: BitbucketUser,
+        description: String,
     )
 }
