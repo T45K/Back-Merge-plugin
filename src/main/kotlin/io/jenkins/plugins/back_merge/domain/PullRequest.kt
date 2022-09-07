@@ -1,13 +1,13 @@
-package io.jenkins.plugins.reverse_merge.domain
+package io.jenkins.plugins.back_merge.domain
 
 data class PullRequest(
     val fromBranch: Branch,
     val owner: BitbucketUser,
 ) {
-    fun buildReverseMergePullRequestTitle(baseBranch: Branch) =
+    fun buildBackMergePullRequestTitle(baseBranch: Branch) =
         "Reverse merge from ${baseBranch.displayId} to ${fromBranch.displayId}"
 
-    fun buildReverseMergePullRequestDescription(baseBranch: Branch) = """
+    fun buildBackMergePullRequestDescription(baseBranch: Branch) = """
         Hello! This is Reverse Merge plugin.
         
         ${baseBranch.displayId} branch was updated, so please your branch by either ways.

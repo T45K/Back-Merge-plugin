@@ -1,7 +1,7 @@
-package io.jenkins.plugins.reverse_merge.infrastructure
+package io.jenkins.plugins.back_merge.infrastructure
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.jenkins.plugins.reverse_merge.domain.*
+import io.jenkins.plugins.back_merge.domain.*
 import okhttp3.Credentials
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
@@ -67,7 +67,7 @@ class HttpClientImpl(
 
     // https://developer.atlassian.com/server/bitbucket/rest/v803/api-group-projects/#api-projects-projectkey-repos-repositoryslug-pull-requests-post
     // https://{baseUrl}/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests
-    override fun sendReverseMergePullRequest(
+    override fun sendBackMergePullRequest(
         urlElements: UrlElements,
         title: String,
         fromBranch: Branch,

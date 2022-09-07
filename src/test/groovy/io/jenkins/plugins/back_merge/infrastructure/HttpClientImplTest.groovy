@@ -1,10 +1,10 @@
-package io.jenkins.plugins.reverse_merge.infrastructure
+package io.jenkins.plugins.back_merge.infrastructure
 
 import groovy.json.JsonSlurper
-import io.jenkins.plugins.reverse_merge.domain.BitbucketUser
-import io.jenkins.plugins.reverse_merge.domain.Branch
-import io.jenkins.plugins.reverse_merge.domain.PullRequest
-import io.jenkins.plugins.reverse_merge.domain.UrlElements
+import io.jenkins.plugins.back_merge.domain.BitbucketUser
+import io.jenkins.plugins.back_merge.domain.Branch
+import io.jenkins.plugins.back_merge.domain.PullRequest
+import io.jenkins.plugins.back_merge.domain.UrlElements
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
 import spock.lang.Specification
@@ -42,7 +42,7 @@ class HttpClientImplTest extends Specification {
         mockWebServer.shutdown()
     }
 
-    def 'sendReverseMergePullRequest sends toRef id, fromRef id, and reviewer id'() {
+    def 'sendBackMergePullRequest sends toRef id, fromRef id, and reviewer id'() {
         given:
         mockWebServer.enqueue(new MockResponse().setResponseCode(200))
 
@@ -52,7 +52,7 @@ class HttpClientImplTest extends Specification {
         final def user = new BitbucketUser(12345)
 
         when:
-        sut.sendReverseMergePullRequest(urlElements, 'title', masterBranch, workBranch, user, 'description')
+        sut.sendBackMergePullRequest(urlElements, 'title', masterBranch, workBranch, user, 'description')
 
         then:
         mockWebServer.requestCount == 1

@@ -1,8 +1,8 @@
-package io.jenkins.plugins.reverse_merge
+package io.jenkins.plugins.back_merge
 
-import io.jenkins.plugins.reverse_merge.domain.UrlElements
-import io.jenkins.plugins.reverse_merge.infrastructure.HttpClientImpl
-import io.jenkins.plugins.reverse_merge.usecase.ReverseMergeUsecase
+import io.jenkins.plugins.back_merge.domain.UrlElements
+import io.jenkins.plugins.back_merge.infrastructure.HttpClientImpl
+import io.jenkins.plugins.back_merge.usecase.BackMergeUsecase
 
 class EntryPoint(
     private val basicAuthUserName: String,
@@ -14,9 +14,9 @@ class EntryPoint(
 ) {
     fun main() {
         val httpClient = HttpClientImpl(basicAuthUserName, basicAuthUserPassword)
-        val usecase = ReverseMergeUsecase(httpClient)
+        val usecase = BackMergeUsecase(httpClient)
         val urlElements = UrlElements(gitRepositoryHostingServiceUrl, projectName, repositoryName)
 
-        usecase.executeReverseMerge(urlElements, baseBranchName)
+        usecase.executeBackMerge(urlElements, baseBranchName)
     }
 }
