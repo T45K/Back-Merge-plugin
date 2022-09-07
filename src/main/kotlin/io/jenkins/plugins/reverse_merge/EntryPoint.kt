@@ -4,7 +4,6 @@ import io.jenkins.plugins.reverse_merge.domain.UrlElements
 import io.jenkins.plugins.reverse_merge.infrastructure.HttpClientImpl
 import io.jenkins.plugins.reverse_merge.usecase.ReverseMergeUsecase
 
-
 class EntryPoint(
     private val basicAuthUserName: String,
     private val basicAuthUserPassword: String,
