@@ -1,22 +1,22 @@
-package io.jenkins.plugins.reverse_merge.usecase
+package io.jenkins.plugins.back_merge.usecase
 
-import io.jenkins.plugins.reverse_merge.domain.HttpClient
-import io.jenkins.plugins.reverse_merge.domain.UrlElements
+import io.jenkins.plugins.back_merge.domain.HttpClient
+import io.jenkins.plugins.back_merge.domain.UrlElements
 
-class ReverseMergeUsecase(private val httpClient: HttpClient) {
-    fun executeReverseMerge(urlElements: UrlElements, baseBranchName: String) {
+class BackMergeUsecase(private val httpClient: HttpClient) {
+    fun executeBackMerge(urlElements: UrlElements, baseBranchName: String) {
         val baseBranch = httpClient.fetchBranchByName(urlElements, baseBranchName)
             ?: throw RuntimeException() // TODO: use appropriate exception
         val pullRequests = httpClient.fetchOpenPullRequests(urlElements)
         for (pullRequest in pullRequests) {
             try {
-                httpClient.sendReverseMergePullRequest(
+                httpClient.sendBackMergePullRequest(
                     urlElements,
-                    pullRequest.buildReverseMergePullRequestTitle(baseBranch),
+                    pullRequest.buildBackMergePullRequestTitle(baseBranch),
                     baseBranch,
                     pullRequest.fromBranch,
                     pullRequest.owner,
-                    pullRequest.buildReverseMergePullRequestDescription(baseBranch),
+                    pullRequest.buildBackMergePullRequestDescription(baseBranch),
                 )
             } catch (e: Exception) {
                 // TODO: logging?

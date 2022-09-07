@@ -1,4 +1,4 @@
-package io.jenkins.plugins.reverse_merge;
+package io.jenkins.plugins.back_merge;
 
 import hudson.Launcher;
 import hudson.EnvVars;
