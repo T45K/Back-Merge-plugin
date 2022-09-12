@@ -1,23 +1,21 @@
 package io.jenkins.plugins.back_merge;
 
-import hudson.Launcher;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
-import hudson.util.FormValidation;
+import hudson.Launcher;
 import hudson.model.AbstractProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.tasks.Builder;
 import hudson.tasks.BuildStepDescriptor;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
-
-import javax.servlet.ServletException;
-import java.io.IOException;
+import hudson.tasks.Builder;
+import hudson.util.FormValidation;
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
+import org.jetbrains.annotations.NotNull;
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 
 public class HelloWorldBuilder extends Builder implements SimpleBuildStep {
 
@@ -43,7 +41,7 @@ public class HelloWorldBuilder extends Builder implements SimpleBuildStep {
     }
 
     @Override
-    public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
+    public void perform(@NotNull Run<?, ?> run, @NotNull FilePath workspace, @NotNull EnvVars env, @NotNull Launcher launcher, @NotNull TaskListener listener) {
         if (useFrench) {
             listener.getLogger().println("Bonjour, " + name + "!");
         } else {
@@ -55,8 +53,7 @@ public class HelloWorldBuilder extends Builder implements SimpleBuildStep {
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
-        public FormValidation doCheckName(@QueryParameter String value, @QueryParameter boolean useFrench)
-                throws IOException, ServletException {
+        public FormValidation doCheckName(@QueryParameter String value, @QueryParameter boolean useFrench) {
             if (value.length() == 0)
                 return FormValidation.error(Messages.HelloWorldBuilder_DescriptorImpl_errors_missingName());
             if (value.length() < 4)
