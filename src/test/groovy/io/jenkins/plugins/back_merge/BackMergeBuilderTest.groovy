@@ -8,7 +8,7 @@ import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Specification
 
-class HelloWorldBuilderTest extends Specification {
+class BackMergeBuilderTest extends Specification {
 
     @Rule
     JenkinsRule jenkins = new JenkinsRule()
@@ -18,22 +18,22 @@ class HelloWorldBuilderTest extends Specification {
     def 'test config round-trip'() {
         when:
         def project = jenkins.createFreeStyleProject()
-        project.buildersList << new HelloWorldBuilder(name)
+        project.buildersList << new BackMergeBuilder(name)
         project = jenkins.configRoundtrip(project)
 
         then:
-        jenkins.assertEqualDataBoundBeans(new HelloWorldBuilder(name), project.buildersList[0])
+        jenkins.assertEqualDataBoundBeans(new BackMergeBuilder(name), project.buildersList[0])
     }
 
     def 'test config round-trip French'() {
         when:
         def project = jenkins.createFreeStyleProject()
-        final def builder = new HelloWorldBuilder(name)
+        final def builder = new BackMergeBuilder(name)
         builder.useFrench = true
         project.buildersList << builder
         project = jenkins.configRoundtrip(project)
 
-        final def lhs = new HelloWorldBuilder(name)
+        final def lhs = new BackMergeBuilder(name)
         lhs.useFrench = true
 
         then:
@@ -43,7 +43,7 @@ class HelloWorldBuilderTest extends Specification {
     def 'test build'() {
         when:
         final def project = jenkins.createFreeStyleProject()
-        final def builder = new HelloWorldBuilder(name)
+        final def builder = new BackMergeBuilder(name)
         project.buildersList.add(builder)
 
         then:
@@ -54,7 +54,7 @@ class HelloWorldBuilderTest extends Specification {
     def 'test build French'() {
         when:
         final def project = jenkins.createFreeStyleProject()
-        final def builder = new HelloWorldBuilder(name)
+        final def builder = new BackMergeBuilder(name)
         builder.useFrench = true
         project.buildersList.add(builder)
 
