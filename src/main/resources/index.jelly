@@ -1,4 +1,5 @@
 <?jelly escape-by-default='true'?>
 <div>
-    Support creating reverse merge of Git branch strategy
+    Support creating back merge of Git branch strategy
 </div>
+<!-- ここはプラグイン一覧ページで表示される -->
