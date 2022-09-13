@@ -67,7 +67,8 @@ public class BackMergeBuilder extends Builder implements SimpleBuildStep {
             usernamePasswordCredential.getUsername(),
             usernamePasswordCredential.getPassword().getPlainText(),
             descriptor.getGitRepositoryHostingServiceUrl(),
-            projectName, repositoryName, baseBranchName).main();
+            projectName, repositoryName, baseBranchName
+        ).main();
     }
 
     @Symbol("backMerge")
