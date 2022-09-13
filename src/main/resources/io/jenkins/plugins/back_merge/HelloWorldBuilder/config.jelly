@@ -1,11 +1,12 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-    <f:entry title="${%Name}" field="name">
+    <f:entry title="${%ProjectName}" field="projectName" description="${%ProjectNameDesc}">
         <f:textbox/>
     </f:entry>
-    <f:advanced>
-        <f:entry title="${%French}" field="useFrench" description="${%FrenchDescr}">
-            <f:checkbox/>
-        </f:entry>
-    </f:advanced>
+    <f:entry title="${%RepositoryName}" field="repositoryName" description="${%RepositoryNameDesc}">
+        <f:textbox/>
+    </f:entry>
+    <f:entry title="${%BaseBranchName}" field="baseBranchName" description="${%BaseBranchNameDesc}">
+        <f:textbox/>
+    </f:entry>
 </j:jelly>

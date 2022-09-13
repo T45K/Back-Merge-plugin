@@ -1,0 +1,13 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:c="/lib/credentials">
+    <f:section title="Back Merge plugin" name="backMerge">
+        <f:entry title="${%GIT_REPOSITORY_HOSTING_SERVICE_URL}" field="gitRepositoryHostingServiceUrl"
+                 description="${%GIT_REPOSITORY_HOSTING_SERVICE_URL_DESC}">
+            <f:textbox/>
+        </f:entry>
+        <f:entry title="${%BASIC_AUTH_CREDENTIAL}" field="basicAuthCredentialId"
+                 description="${%BASIC_AUTH_CREDENTIAL_DESC}">
+            <c:select/>
+        </f:entry>
+    </f:section>
+</j:jelly>
