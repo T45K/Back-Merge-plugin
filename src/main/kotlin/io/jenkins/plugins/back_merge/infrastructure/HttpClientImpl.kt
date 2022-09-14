@@ -19,7 +19,7 @@ class HttpClientImpl(
     // https://developer.atlassian.com/server/bitbucket/rest/v803/api-group-projects/#api-projects-projectkey-repos-repositoryslug-branches-get
     // https://{baseUrl}/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/branches
     override fun fetchBranchByName(urlElements: UrlElements, branchName: String): Branch? {
-        val url = urlElements.toUrl()
+        val url = urlElements.toBranchUrl()
 
         val request = Request.Builder()
             .addHeader("Authorization", Credentials.basic(basicAuthUserName, basicAuthPassword))
@@ -44,7 +44,7 @@ class HttpClientImpl(
     // https://developer.atlassian.com/server/bitbucket/rest/v803/api-group-projects/#api-projects-projectkey-repos-repositoryslug-pull-requests-get
     // https://{baseurl}/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests
     override fun fetchOpenPullRequests(urlElements: UrlElements): List<PullRequest> {
-        val url = urlElements.toUrl()
+        val url = urlElements.toPullRequestUrl()
 
         val request = Request.Builder()
             .addHeader("Authorization", Credentials.basic(basicAuthUserName, basicAuthPassword))
@@ -75,7 +75,7 @@ class HttpClientImpl(
         reviewer: BitbucketUser,
         description: String,
     ) {
-        val url = urlElements.toUrl()
+        val url = urlElements.toPullRequestUrl()
 
         val requestBody = jsonMapper.writeValueAsString(
             mapOf(
@@ -95,8 +95,18 @@ class HttpClientImpl(
 
         client.newCall(request).execute()
     }
+    private fun UrlElements.toBranchUrl() = this.gitRepositoryHostingServiceUrl.toHttpUrl().newBuilder()
+        .addPathSegment("rest")
+        .addPathSegment("api")
+        .addPathSegment("1.0")
+        .addPathSegment("projects")
+        .addPathSegment(this.projectName)
+        .addPathSegment("repos")
+        .addPathSegment(this.repositoryName)
+        .addPathSegment("branches")
+        .build()
 
-    private fun UrlElements.toUrl() = this.gitRepositoryHostingServiceUrl.toHttpUrl().newBuilder()
+    private fun UrlElements.toPullRequestUrl() = this.gitRepositoryHostingServiceUrl.toHttpUrl().newBuilder()
         .addPathSegment("rest")
         .addPathSegment("api")
         .addPathSegment("1.0")
