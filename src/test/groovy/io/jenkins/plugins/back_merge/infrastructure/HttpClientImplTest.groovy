@@ -19,11 +19,15 @@ class HttpClientImplTest extends Specification {
 
         final def urlElements = new UrlElements(mockWebServer.url('').toString(), 'foo', 'bar')
 
-        expect:
-        sut.fetchBranchByName(urlElements, name) == branch
+        when:
+        def actualBranch = sut.fetchBranchByName(urlElements, name)
+
+        then:
+        actualBranch == expectedBranch
+        mockWebServer.takeRequest().requestUrl == mockWebServer.url('rest/api/1.0/projects/foo/repos/bar/branches')
 
         where:
-        name     | branch
+        name     | expectedBranch
         'master' | new Branch('refs/heads/master', 'master')
         'work'   | null
     }
@@ -34,12 +38,12 @@ class HttpClientImplTest extends Specification {
 
         final def urlElements = new UrlElements(mockWebServer.url('').toString(), 'foo', 'bar')
 
-        expect:
-        sut.fetchOpenPullRequests(urlElements) ==
-            [new PullRequest(new Branch('refs/heads/feature-ABC-123', 'feature-ABC-1233'), new BitbucketUser(101))]
+        when:
+        def pullRequests = sut.fetchOpenPullRequests(urlElements)
 
-        cleanup:
-        mockWebServer.shutdown()
+        then:
+        pullRequests == [new PullRequest(new Branch('refs/heads/feature-ABC-123', 'feature-ABC-1233'), new BitbucketUser(101))]
+        mockWebServer.takeRequest().requestUrl == mockWebServer.url('rest/api/1.0/projects/foo/repos/bar/pull-requests')
     }
 
     def 'sendBackMergePullRequest sends toRef id, fromRef id, and reviewer id'() {
@@ -64,6 +68,7 @@ class HttpClientImplTest extends Specification {
             reviewers  : [user: [id: 12345]],
             description: 'description'
         ]
+        request.requestUrl == mockWebServer.url('rest/api/1.0/projects/foo/repos/bar/pull-requests')
     }
 
     def cleanup() {
