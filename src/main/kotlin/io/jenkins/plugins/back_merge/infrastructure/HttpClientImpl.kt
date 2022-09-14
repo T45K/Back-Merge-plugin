@@ -60,7 +60,7 @@ class HttpClientImpl(
             .map { json ->
                 PullRequest(
                     Branch(json["fromRef"]["id"].asText(), json["fromRef"]["displayId"].asText()),
-                    BitbucketUser(json["author"]["user"]["id"].asInt())
+                    BitbucketUser(json["author"]["user"]["name"].asText())
                 )
             }
     }
@@ -82,7 +82,7 @@ class HttpClientImpl(
                 "title" to title,
                 "fromRef" to mapOf("id" to fromBranch.id),
                 "toRef" to mapOf("id" to toBranch.id),
-                "reviewers" to mapOf("user" to mapOf("id" to reviewer.id)),
+                "reviewers" to listOf(mapOf("user" to mapOf("name" to reviewer.name))),
                 "description" to description
             )
         ).toRequestBody("application/json; charset=utf-8".toMediaType())
@@ -95,6 +95,7 @@ class HttpClientImpl(
 
         client.newCall(request).execute()
     }
+
     private fun UrlElements.toBranchUrl() = this.gitRepositoryHostingServiceUrl.toHttpUrl().newBuilder()
         .addPathSegment("rest")
         .addPathSegment("api")

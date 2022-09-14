@@ -64,6 +64,7 @@ public class BackMergeBuilder extends Builder implements SimpleBuildStep {
         final UsernamePasswordCredentialsImpl usernamePasswordCredential = Optional.ofNullable(CredentialsProvider.findCredentialById(descriptor.getBasicAuthCredentialId(), UsernamePasswordCredentialsImpl.class, run))
             .orElseThrow(); // TODO: appropriate exception
         new EntryPoint(
+            listener.getLogger(),
             usernamePasswordCredential.getUsername(),
             usernamePasswordCredential.getPassword().getPlainText(),
             descriptor.getGitRepositoryHostingServiceUrl(),

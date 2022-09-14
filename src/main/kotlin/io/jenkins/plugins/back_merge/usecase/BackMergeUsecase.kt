@@ -1,5 +1,6 @@
 package io.jenkins.plugins.back_merge.usecase
 
+import io.jenkins.plugins.back_merge.JenkinsLogger
 import io.jenkins.plugins.back_merge.domain.HttpClient
 import io.jenkins.plugins.back_merge.domain.UrlElements
 
@@ -19,7 +20,7 @@ class BackMergeUsecase(private val httpClient: HttpClient) {
                     pullRequest.buildBackMergePullRequestDescription(baseBranch),
                 )
             } catch (e: Exception) {
-                // TODO: logging?
+                JenkinsLogger.info(e.localizedMessage)
             }
         }
     }

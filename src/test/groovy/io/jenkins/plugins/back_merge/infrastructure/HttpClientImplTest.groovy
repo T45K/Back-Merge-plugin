@@ -42,7 +42,7 @@ class HttpClientImplTest extends Specification {
         def pullRequests = sut.fetchOpenPullRequests(urlElements)
 
         then:
-        pullRequests == [new PullRequest(new Branch('refs/heads/feature-ABC-123', 'feature-ABC-1233'), new BitbucketUser(101))]
+        pullRequests == [new PullRequest(new Branch('refs/heads/feature-ABC-123', 'feature-ABC-1233'), new BitbucketUser('jcitizen'))]
         mockWebServer.takeRequest().requestUrl == mockWebServer.url('rest/api/1.0/projects/foo/repos/bar/pull-requests')
     }
 
@@ -53,7 +53,7 @@ class HttpClientImplTest extends Specification {
         final def urlElements = new UrlElements(mockWebServer.url('').toString(), 'foo', 'bar')
         final def masterBranch = new Branch('refs/heads/master', 'master')
         final def workBranch = new Branch('refs/heads/work', 'work')
-        final def user = new BitbucketUser(12345)
+        final def user = new BitbucketUser('jcitizen')
 
         when:
         sut.sendBackMergePullRequest(urlElements, 'title', masterBranch, workBranch, user, 'description')
@@ -65,7 +65,7 @@ class HttpClientImplTest extends Specification {
             title      : 'title',
             fromRef    : [id: 'refs/heads/master'],
             toRef      : [id: 'refs/heads/work'],
-            reviewers  : [user: [id: 12345]],
+            reviewers  : [[user: [name: 'jcitizen']]],
             description: 'description'
         ]
         request.requestUrl == mockWebServer.url('rest/api/1.0/projects/foo/repos/bar/pull-requests')
