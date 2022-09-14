@@ -5,12 +5,12 @@ data class PullRequest(
     val owner: BitbucketUser,
 ) {
     fun buildBackMergePullRequestTitle(baseBranch: Branch) =
-        "Reverse merge from ${baseBranch.displayId} to ${fromBranch.displayId}"
+        "Back merge from ${baseBranch.displayId} to ${fromBranch.displayId}"
 
     fun buildBackMergePullRequestDescription(baseBranch: Branch) = """
-        Hello! This is Reverse Merge plugin.
+        Hello! This is Back Merge plugin.
         
-        ${baseBranch.displayId} branch was updated, so please your branch by either ways.
+        Now ${baseBranch.displayId} branch has been updated, so please update your branch in the one of the following ways.
         1. Approve this PR and push merge button.
         2. Merge ${baseBranch.displayId} branch into your branch manually and push it (this PR will be closed automatically).
         
