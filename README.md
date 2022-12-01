@@ -1,28 +1,41 @@
-# demo
+# Back Merge plugin
+
+## Note
+This plugin is currently used for only Bitbucket Server.
 
 ## Introduction
+Have you ever found it annoying to merge main branch into your feature branch when the main branch is updated?
+Or, have you ever been caught in a panic right before merging your feature branch into the main branch because you didn't notice an update on the main branch?
 
-TODO Describe what your plugin does here
+This plugin will solve such problems!
 
-## Getting started
+## Steps
+1. You merge a feature branch into the main branch.
+2. Bitbucket server notifies Jenkins of the event.
+3. Jenkins starts a job containing build step of this plugin.
+4. This plugin fetches all opened pull requests and create pull requests from the main branch to branches of those pull request.
+5. What you should do is just merging them!
 
-TODO Tell users how to configure your plugin here, include screenshots, pipeline examples and 
-configuration-as-code examples.
+## Settings
+1. Download the latest version of Back-Merge-plugin from [Release](https://github.com/T45K/Back-Merge-plugin/releases).
+2. Deploy it to your Jenkins via `/pluginManager/advanced`.
+3. Go to Jenkins `/configure`, and fill in Back Merge plugin settings.
+4. Create new Freestyle job.
+5. In its configure page, specify `Create back merge pull requests` build step.
 
-## Issues
+## Configure
+### Global configure
+|:--:|:--|
+|Name|Description|
+|URL of Git repository hosting service|Usally like `https://your.bitbuckt.server.url`.|
+|Basic auth credential|This values will be used for calling Bitbucket Server API. This will be the same as your usaname and password of Bitbucket server.|
 
-TODO Decide where you're going to host your issues, the default is Jenkins JIRA, but you can also enable GitHub issues,
-If you use GitHub issues there's no need for this section; else add the following line:
-
-Report issues and enhancements in the [Jenkins issue tracker](https://issues.jenkins-ci.org/).
-
-## Contributing
-
-TODO review the default [CONTRIBUTING](https://github.com/jenkinsci/.github/blob/master/CONTRIBUTING.md) file and make sure it is appropriate for your plugin, if not then add your own one adapted from the base file
-
-Refer to our [contribution guidelines](https://github.com/jenkinsci/.github/blob/master/CONTRIBUTING.md)
+### Job configure
+|:--:|:--|
+|Name|Description|
+|Project name|`xxx` of `/projects/xxx/repos/yyy` in the case of Bitbucket Server.|
+|Repository name|`yyy` of `/projects/xxx/repos/yyy` in the case of Bitbucket Server.|
+|Base branch name|For example, `main`, `master`, `work`, etc.|
 
 ## LICENSE
-
-Licensed under MIT, see [LICENSE](LICENSE.md)
-
+Licensed under MIT, see LICENSE
