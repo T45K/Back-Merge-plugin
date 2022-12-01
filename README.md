@@ -25,14 +25,14 @@ This plugin will solve such problems!
 
 ## Configure
 ### Global configure
-|:--:|:--|
 |Name|Description|
+|:--:|:--|
 |URL of Git repository hosting service|Usally like `https://your.bitbuckt.server.url`.|
 |Basic auth credential|This values will be used for calling Bitbucket Server API. This will be the same as your usaname and password of Bitbucket server.|
 
 ### Job configure
-|:--:|:--|
 |Name|Description|
+|:--:|:--|
 |Project name|`xxx` of `/projects/xxx/repos/yyy` in the case of Bitbucket Server.|
 |Repository name|`yyy` of `/projects/xxx/repos/yyy` in the case of Bitbucket Server.|
 |Base branch name|For example, `main`, `master`, `work`, etc.|
