@@ -1,8 +1,5 @@
 # Back Merge plugin
 
-## Note
-This plugin is currently used for only Bitbucket Server.
-
 ## Introduction
 Have you ever found it annoying to merge main branch into your feature branch when the main branch is updated?
 Or, have you ever been caught in a panic right before merging your feature branch into the main branch because you didn't notice an update on the main branch?
@@ -27,7 +24,7 @@ This plugin will solve such problems!
 ### Global configure
 |Name|Description|
 |:--:|:--|
-|URL of Git repository hosting service|Usally like `https://your.bitbuckt.server.url`.|
+|URL of Git repository hosting service|Usually like `https://your.bitbuckt.server.url`.|
 |Basic auth credential|This values will be used for calling Bitbucket Server API. This will be the same as your usaname and password of Bitbucket server.|
 
 ### Job configure
@@ -36,6 +33,10 @@ This plugin will solve such problems!
 |Project name|`xxx` of `/projects/xxx/repos/yyy` in the case of Bitbucket Server.|
 |Repository name|`yyy` of `/projects/xxx/repos/yyy` in the case of Bitbucket Server.|
 |Base branch name|For example, `main`, `master`, `work`, etc.|
+
+## Note
+- This plugin is currently used for only Bitbucket Server.
+- You need to set up trigger of your job by yourself. I recommend `Bitbucket-Server-Integration` plugin.
 
 ## LICENSE
 Licensed under MIT, see LICENSE
