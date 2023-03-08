@@ -112,7 +112,7 @@ public class BackMergeBuilder extends Builder implements SimpleBuildStep {
             return Messages.BackMergeBuilder_DescriptorImpl_DisplayName();
         }
 
-        public ListBoxModel doFillBasicAuthCredentialIdItems() {
+        public ListBoxModel doFillAuthCredentialIdItems() {
             return new StandardListBoxModel()
                 .includeEmptyValue()
                 .includeMatchingAs(ACL.SYSTEM, Jenkins.get(), StandardCredentials.class, Collections.emptyList(),
