@@ -169,6 +169,7 @@
                 <version>3.11.0</version>
                 <configuration>
                     <release>11</release>
+                    <testRelease>11</testRelease>
                 </configuration>
                 <executions>
                     <!-- Replacing default-compile as it is treated specially by maven -->
