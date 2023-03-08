@@ -91,7 +91,7 @@ public class BackMergeBuilder extends Builder implements SimpleBuildStep {
         }
 
         @Override
-        public boolean configure(final StaplerRequest req, final JSONObject json) throws FormException {
+        public boolean configure(final StaplerRequest req, final JSONObject json) {
             final JSONObject globalSettings = json.getJSONObject("backMerge");
             this.gitRepositoryHostingServiceUrl = globalSettings.getString("gitRepositoryHostingServiceUrl");
             this.basicAuthCredentialId = globalSettings.getOrDefault("basicAuthCredentialId", "").toString();
