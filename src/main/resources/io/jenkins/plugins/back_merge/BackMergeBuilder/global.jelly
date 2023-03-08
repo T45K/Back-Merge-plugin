@@ -5,8 +5,8 @@
                  description="${%GIT_REPOSITORY_HOSTING_SERVICE_URL_DESC}">
             <f:textbox/>
         </f:entry>
-        <f:entry title="${%BASIC_AUTH_CREDENTIAL}" field="basicAuthCredentialId"
-                 description="${%BASIC_AUTH_CREDENTIAL_DESC}">
+        <f:entry title="${%AUTH_CREDENTIAL}" field="authCredentialId"
+                 description="${%AUTH_CREDENTIAL_DESC}">
             <c:select/>
         </f:entry>
     </f:section>
