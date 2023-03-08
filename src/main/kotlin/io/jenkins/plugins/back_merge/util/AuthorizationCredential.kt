@@ -10,8 +10,8 @@ sealed interface AuthorizationCredential {
         override fun asAuthorizationHeader(): String = Credentials.basic(username, password)
     }
 
-    data class Barer(private val secret: String) : AuthorizationCredential {
-        override fun asAuthorizationHeader(): String = "Barer: $secret"
+    data class Bearer(private val secret: String) : AuthorizationCredential {
+        override fun asAuthorizationHeader(): String = "Bearer $secret"
     }
 }
 
@@ -19,7 +19,7 @@ object AuthorizationCredentialFactory {
     fun create(username: String, password: String, httpAccessToken: String): AuthorizationCredential =
         when {
             username.isNotBlank() && password.isNotBlank() -> AuthorizationCredential.Basic(username, password)
-            httpAccessToken.isNotBlank() -> AuthorizationCredential.Barer(httpAccessToken)
+            httpAccessToken.isNotBlank() -> AuthorizationCredential.Bearer(httpAccessToken)
             else -> throw NoSuchElementException()
         }
 }
