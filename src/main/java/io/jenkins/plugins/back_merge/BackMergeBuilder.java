@@ -15,6 +15,7 @@ import hudson.security.ACL;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
+import hudson.util.Secret;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
@@ -61,12 +62,13 @@ public class BackMergeBuilder extends Builder implements SimpleBuildStep {
     @Override
     public void perform(@NotNull Run<?, ?> run, @NotNull FilePath workspace, @NotNull EnvVars env, @NotNull Launcher launcher, @NotNull TaskListener listener) {
         final DescriptorImpl descriptor = (DescriptorImpl) super.getDescriptor();
-        final UsernamePasswordCredentialsImpl usernamePasswordCredential = Optional.ofNullable(CredentialsProvider.findCredentialById(descriptor.getBasicAuthCredentialId(), UsernamePasswordCredentialsImpl.class, run))
-            .orElseThrow(); // TODO: appropriate exception
+        final Optional<UsernamePasswordCredentialsImpl> usernamePasswordCredential = Optional.ofNullable(CredentialsProvider.findCredentialById(descriptor.getAuthCredentialId(), UsernamePasswordCredentialsImpl.class, run));
+        final Optional<StringCredentialsImpl> httpAccessTokenCredential = Optional.ofNullable(CredentialsProvider.findCredentialById(descriptor.getAuthCredentialId(), StringCredentialsImpl.class, run));
         new EntryPoint(
             listener.getLogger(),
-            usernamePasswordCredential.getUsername(),
-            usernamePasswordCredential.getPassword().getPlainText(),
+            usernamePasswordCredential.map(UsernamePasswordCredentialsImpl::getUsername).orElse(""),
+            usernamePasswordCredential.map(UsernamePasswordCredentialsImpl::getPassword).map(Secret::getPlainText).orElse(""),
+            httpAccessTokenCredential.map(StringCredentialsImpl::getSecret).map(Secret::getPlainText).orElse(""),
             descriptor.getGitRepositoryHostingServiceUrl(),
             projectName, repositoryName, baseBranchName
         ).main();
@@ -86,15 +88,15 @@ public class BackMergeBuilder extends Builder implements SimpleBuildStep {
             return gitRepositoryHostingServiceUrl;
         }
 
-        public String getBasicAuthCredentialId() {
+        public String getAuthCredentialId() {
             return basicAuthCredentialId;
         }
 
         @Override
-        public boolean configure(final StaplerRequest req, final JSONObject json) throws FormException {
+        public boolean configure(final StaplerRequest req, final JSONObject json) {
             final JSONObject globalSettings = json.getJSONObject("backMerge");
             this.gitRepositoryHostingServiceUrl = globalSettings.getString("gitRepositoryHostingServiceUrl");
-            this.basicAuthCredentialId = globalSettings.getOrDefault("basicAuthCredentialId", "").toString();
+            this.basicAuthCredentialId = globalSettings.getOrDefault("authCredentialId", "").toString();
             super.save();
             return true;
         }

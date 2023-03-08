@@ -5,13 +5,14 @@ import io.jenkins.plugins.back_merge.domain.BitbucketUser
 import io.jenkins.plugins.back_merge.domain.Branch
 import io.jenkins.plugins.back_merge.domain.PullRequest
 import io.jenkins.plugins.back_merge.domain.UrlElements
+import io.jenkins.plugins.back_merge.util.AuthorizationCredential
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
 import spock.lang.Specification
 
 class HttpClientImplTest extends Specification {
     private final def mockWebServer = new MockWebServer()
-    private final def sut = new HttpClientImpl('hoge', 'fuga')
+    private final def sut = new HttpClientImpl(new AuthorizationCredential.Basic('hoge', 'fuga'))
 
     def 'fetchBranchByName returns branch object from JSON'() {
         given:

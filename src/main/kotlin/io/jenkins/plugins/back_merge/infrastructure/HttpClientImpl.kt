@@ -1,8 +1,12 @@
 package io.jenkins.plugins.back_merge.infrastructure
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.jenkins.plugins.back_merge.domain.*
-import okhttp3.Credentials
+import io.jenkins.plugins.back_merge.domain.BitbucketUser
+import io.jenkins.plugins.back_merge.domain.Branch
+import io.jenkins.plugins.back_merge.domain.HttpClient
+import io.jenkins.plugins.back_merge.domain.PullRequest
+import io.jenkins.plugins.back_merge.domain.UrlElements
+import io.jenkins.plugins.back_merge.util.AuthorizationCredential
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -10,8 +14,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 
 class HttpClientImpl(
-    private val basicAuthUserName: String,
-    private val basicAuthPassword: String,
+    private val credential: AuthorizationCredential
 ) : HttpClient {
     private val client = OkHttpClient()
     private val jsonMapper = jacksonObjectMapper()
@@ -22,7 +25,7 @@ class HttpClientImpl(
         val url = urlElements.toBranchUrl()
 
         val request = Request.Builder()
-            .addHeader("Authorization", Credentials.basic(basicAuthUserName, basicAuthPassword))
+            .addHeader("Authorization", credential.asAuthorizationHeader())
             .url(url)
             .get()
             .build()
@@ -47,7 +50,7 @@ class HttpClientImpl(
         val url = urlElements.toPullRequestUrl()
 
         val request = Request.Builder()
-            .addHeader("Authorization", Credentials.basic(basicAuthUserName, basicAuthPassword))
+            .addHeader("Authorization", credential.asAuthorizationHeader())
             .url(url)
             .get()
             .build()
@@ -88,7 +91,7 @@ class HttpClientImpl(
         ).toRequestBody("application/json; charset=utf-8".toMediaType())
 
         val request = Request.Builder()
-            .addHeader("Authorization", Credentials.basic(basicAuthUserName, basicAuthPassword))
+            .addHeader("Authorization", credential.asAuthorizationHeader())
             .url(url)
             .post(requestBody)
             .build()
